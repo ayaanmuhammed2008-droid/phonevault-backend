@@ -1,0 +1,76 @@
+// PhoneVault - Prisma Schema
+// Defines the Phone model used across the entire API.
+// Run `npx prisma migrate dev --name init` after configuring DATABASE_URL in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Phone {
+  id     Int    @id @default(autoincrement())
+
+  // ---------- Basic information ----------
+  brand       String
+  model       String
+  slug        String   @unique
+  price       Decimal  @db.Decimal(10, 2)
+  releaseDate DateTime?
+  description String?  @db.Text
+  imageUrl    String?
+
+  // ---------- Display ----------
+  displaySize  Float?   // in inches, e.g. 6.7
+  displayType  String?  // e.g. "AMOLED", "LTPO OLED"
+  resolution   String?  // e.g. "1290 x 2796"
+  refreshRate  Int?     // in Hz, e.g. 120
+
+  // ---------- Performance ----------
+  processor       String?
+  gpu             String?
+  ram             Int?     // in GB
+  storage         Int?     // in GB
+  operatingSystem String?  // e.g. "Android 15", "iOS 18"
+
+  // ---------- Cameras ----------
+  mainCamera       String?
+  ultrawideCamera  String?
+  telephotoCamera  String?
+  frontCamera      String?
+  videoRecording   String?
+
+  // ---------- Battery ----------
+  batteryCapacity  Int?     // in mAh
+  chargingSpeed    String?  // e.g. "45W wired, 15W wireless"
+  wirelessCharging Boolean  @default(false)
+
+  // ---------- Connectivity ----------
+  network String?  // e.g. "GSM / CDMA / HSPA / LTE / 5G"
+  wifi    String?  // e.g. "Wi-Fi 7"
+  bluetooth String? // e.g. "5.4"
+  nfc     Boolean  @default(false)
+  usb     String?  // e.g. "USB Type-C 3.2"
+  fiveG   Boolean  @default(false)
+
+  // ---------- Physical information ----------
+  dimensions String? // e.g. "160.9 x 77.8 x 8.3 mm"
+  weight     Float?  // in grams
+
+  // ---------- Other ----------
+  rating Float? // e.g. 4.5 (out of 5)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ---------- Indexes / constraints ----------
+  @@index([brand])
+  @@index([model])
+  @@index([price])
+  @@index([brand, model])
+  @@map("phones")
+}
